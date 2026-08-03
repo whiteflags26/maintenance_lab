@@ -30,3 +30,13 @@ new capability. It is an emergency change because authenticated users can expose
 another user's data and the fix cannot wait for the normal release cycle. Approval should
 weigh the high cost of leaving cross-user disclosure and data loss possible against the
 small, localized implementation cost. Legitimate user behavior does not change.
+
+## Impact analysis
+
+Dependency tracing limits the fix to `CategoryController.Details`, `Delete`, and
+`DeleteConfirmed`, plus the equivalent three `TransactionController` actions. Their Details
+and Delete views only render the supplied model, so they need no changes when a non-owned
+resource resolves to `NotFound()`. No model, database schema, or routing change is required.
+QA should verify that a bookmarked `/Category/Details/{id}` belonging to another user now
+returns 404 rather than displaying the record, and repeat that ownership check for the
+transaction details and both delete flows.
