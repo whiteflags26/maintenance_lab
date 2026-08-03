@@ -43,7 +43,7 @@ namespace SpenditWeb.Controllers
 
             var transaction = await _context.Transactions
                 .Include(t => t.Category)
-                .FirstOrDefaultAsync(m => m.TransactionId == id);
+                .FirstOrDefaultAsync(m => m.TransactionId == id && m.Category.UserId == _userManager.GetUserId(User));
             if (transaction == null)
             {
                 return NotFound();
@@ -145,7 +145,7 @@ namespace SpenditWeb.Controllers
 
             var transaction = await _context.Transactions
                 .Include(t => t.Category)
-                .FirstOrDefaultAsync(m => m.TransactionId == id);
+                .FirstOrDefaultAsync(m => m.TransactionId == id && m.Category.UserId == _userManager.GetUserId(User));
             if (transaction == null)
             {
                 return NotFound();
@@ -159,7 +159,8 @@ namespace SpenditWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var transaction = await _context.Transactions.FindAsync(id);
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(m => m.TransactionId == id && m.Category.UserId == _userManager.GetUserId(User));
             if (transaction != null)
             {
                 _context.Transactions.Remove(transaction);

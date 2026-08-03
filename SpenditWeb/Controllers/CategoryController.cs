@@ -41,7 +41,7 @@ namespace SpenditWeb.Controllers
             }
 
             var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
+                .FirstOrDefaultAsync(m => m.CategoryId == id && m.UserId == _userManager.GetUserId(User));
             if (category == null)
             {
                 return NotFound();
@@ -135,7 +135,7 @@ namespace SpenditWeb.Controllers
             }
 
             var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
+                .FirstOrDefaultAsync(m => m.CategoryId == id && m.UserId == _userManager.GetUserId(User));
             if (category == null)
             {
                 return NotFound();
@@ -149,13 +149,23 @@ namespace SpenditWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(m => m.CategoryId == id && m.UserId == _userManager.GetUserId(User));
             if (category != null)
             {
                 _context.Categories.Remove(category);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException)
+                {
+                    TempData["Error"] = "Category is in use by existing transactions and can't be deleted";
+                    return RedirectToAction(nameof(Delete), new { id });
+                }
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
