@@ -22,3 +22,11 @@ from `CategoryController` and `TransactionController`.
 | `Transaction.Details` | No |
 | `Transaction.Delete` (GET) | No |
 | `Transaction.DeleteConfirmed` (POST) | No |
+
+## Change management
+
+This is corrective maintenance: an incomplete ownership check is a logic defect, not a
+new capability. It is an emergency change because authenticated users can expose or delete
+another user's data and the fix cannot wait for the normal release cycle. Approval should
+weigh the high cost of leaving cross-user disclosure and data loss possible against the
+small, localized implementation cost. Legitimate user behavior does not change.
