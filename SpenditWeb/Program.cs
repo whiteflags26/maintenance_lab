@@ -3,6 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Spendit.DataAccess;
 using Spendit.Services;
+using System.Globalization;
+
+var applicationCulture = CultureInfo.GetCultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentCulture = applicationCulture;
+CultureInfo.DefaultThreadCurrentUICulture = applicationCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +25,12 @@ builder.Services.Configure<ChromiumSettings>(builder.Configuration.GetSection("C
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
 
 var app = builder.Build();
 
