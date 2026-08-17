@@ -16,3 +16,20 @@ in Index, Details, Create, Edit, Delete, and DeleteConfirmed; Transaction uses i
 Details, Delete, DeleteConfirmed, and PopulateCategories. There is no shared controller
 helper or centralized ownership-query abstraction, making omission easy when actions are
 added.
+
+## Change management
+
+This is preventive, incremental maintenance: no reported defect or environment change
+requires it. The small refactor is performed opportunistically to reduce the chance that a
+misspelled category type or omitted user lookup creates a future defect.
+
+## Impact analysis
+
+The constants belong in `Spendit.Models`, already referenced by the web and utility
+projects, avoiding a new or circular dependency. Compile-time references affect the two
+models, `Dashboard.cs`, `PredictionService.cs`, and Razor forms/client templates. A shared
+base controller affects only Category and Transaction controller inheritance and replaces
+their repeated user-manager calls; routes and public action signatures remain unchanged.
+There is no schema or migration impact because constant values remain exactly `Income` and
+`Expense`. QA should exercise category forms, type styling, dashboard totals, prediction,
+and every user-scoped Category/Transaction action.
