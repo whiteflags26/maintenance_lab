@@ -35,7 +35,7 @@
 </div>
 
 <script id="amountColumnTemplate" type="text/x-template">
-    ${if(Category.Type=="Income")}
+    ${if(Category.Type=="@CategoryType.Income")}
         <span class="badge bg-info">${FormattedAmount}</span>
     ${else}
         <span class="badge bg-danger">${FormattedAmount}</span>

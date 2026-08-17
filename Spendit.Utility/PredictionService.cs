@@ -1,4 +1,5 @@
 ﻿using Spendit.DataAccess;
+using Spendit.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace Spendit.Services
                 .Select(g => new MonthlyData
                 {
                     Month = new DateTime(g.Key.Year, g.Key.Month, 1),
-                    TotalAmount = g.Sum(t => t.Category.Type == "Income" ? t.Amount : -t.Amount)
+                    TotalAmount = g.Sum(t => t.Category.Type == CategoryType.Income ? t.Amount : -t.Amount)
                 })
                 .OrderBy(m => m.Month)
                 .ToList();

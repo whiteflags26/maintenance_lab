@@ -13,23 +13,22 @@ using Spendit.DataAccess;
 namespace SpenditWeb.Controllers
 {
     [Authorize]
-    public class TransactionController : Controller
+    public class TransactionController : SpenditControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<HomeController> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
 
         public TransactionController(ApplicationDbContext context, ILogger<HomeController> logger, UserManager<IdentityUser> userManager)
+            : base(userManager)
         {
             _context = context;
             _logger = logger;
-            _userManager = userManager;
         }
 
         // GET: Transaction
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Transactions.Where(t => t.Category.UserId== _userManager.GetUserId(User)).Include(t => t.Category);
+            var applicationDbContext = _context.Transactions.Where(t => t.Category.UserId == CurrentUserId).Include(t => t.Category);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -43,7 +42,7 @@ namespace SpenditWeb.Controllers
 
             var transaction = await _context.Transactions
                 .Include(t => t.Category)
-                .FirstOrDefaultAsync(m => m.TransactionId == id && m.Category.UserId == _userManager.GetUserId(User));
+                .FirstOrDefaultAsync(m => m.TransactionId == id && m.Category.UserId == CurrentUserId);
             if (transaction == null)
             {
                 return NotFound();
@@ -145,7 +144,7 @@ namespace SpenditWeb.Controllers
 
             var transaction = await _context.Transactions
                 .Include(t => t.Category)
-                .FirstOrDefaultAsync(m => m.TransactionId == id && m.Category.UserId == _userManager.GetUserId(User));
+                .FirstOrDefaultAsync(m => m.TransactionId == id && m.Category.UserId == CurrentUserId);
             if (transaction == null)
             {
                 return NotFound();
@@ -160,7 +159,7 @@ namespace SpenditWeb.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var transaction = await _context.Transactions
-                .FirstOrDefaultAsync(m => m.TransactionId == id && m.Category.UserId == _userManager.GetUserId(User));
+                .FirstOrDefaultAsync(m => m.TransactionId == id && m.Category.UserId == CurrentUserId);
             if (transaction != null)
             {
                 _context.Transactions.Remove(transaction);
@@ -179,7 +178,7 @@ namespace SpenditWeb.Controllers
         [NonAction]
         public void PopulateCategories()
         {
-            var CategoryCollection = _context.Categories.Where(x=> x.UserId == _userManager.GetUserId(User)).ToList();
+            var CategoryCollection = _context.Categories.Where(x => x.UserId == CurrentUserId).ToList();
             Category DefaultCategory = new Category() { CategoryId = 0, Title = "Choose a Category", Type = ""};
             CategoryCollection.Insert(0, DefaultCategory);
          

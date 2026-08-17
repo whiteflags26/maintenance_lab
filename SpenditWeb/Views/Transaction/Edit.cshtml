@@ -53,9 +53,9 @@
 
 <script id="itemTemplate" type="text/x-template">
     <span class="title-with-icon">${TitleWithIcon}</span>
-    ${if (Type == "Income")}
+    ${if (Type == "@CategoryType.Income")}
         <span class="badge bg-info">${Type}</span>
-    ${else if(Type == "Expense")}
+    ${else if(Type == "@CategoryType.Expense")}
         <span class="badge bg-danger">${Type}</span>
     ${/if}
 </script>

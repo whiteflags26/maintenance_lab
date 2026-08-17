@@ -21,9 +21,9 @@
                 </div>
                 <div class="mb-3">
                     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="Type" id="radioleft" value="Expense" checked="@(Model.Type=="Expense")">
+                        <input type="radio" class="btn-check" name="Type" id="radioleft" value="@CategoryType.Expense" checked="@(Model.Type == CategoryType.Expense)">
                         <label class="btn btn-outline-danger" for="radioleft">Expense</label>
-                        <input type="radio" class="btn-check" name="Type" id="radioright" value="Income" checked="@(Model.Type=="Income")">
+                        <input type="radio" class="btn-check" name="Type" id="radioright" value="@CategoryType.Income" checked="@(Model.Type == CategoryType.Income)">
                         <label class="btn btn-outline-danger" for="radioright">Income</label>
                     </div>
                 </div>
@@ -76,11 +76,11 @@
             <div class="mb-3">
                 <label asp-for="Type" class="control-label"></label>
                 <div class="form-check">
-                    <input type="radio" asp-for="Type" value="Expense" id="expenseRadio" class="form-check-input" />
+                    <input type="radio" asp-for="Type" value="@CategoryType.Expense" id="expenseRadio" class="form-check-input" />
                     <label class="form-check-label" for="expenseRadio">Expense</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" asp-for="Type" value="Income" id="incomeRadio" class="form-check-input" />
+                    <input type="radio" asp-for="Type" value="@CategoryType.Income" id="incomeRadio" class="form-check-input" />
                     <label class="form-check-label" for="incomeRadio">Income</label>
                 </div>
                 <span asp-validation-for="Type" class="text-danger"></span>

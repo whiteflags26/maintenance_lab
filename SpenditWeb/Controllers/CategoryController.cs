@@ -13,23 +13,22 @@ using Spendit.DataAccess;
 namespace SpenditWeb.Controllers
 {
     [Authorize]
-    public class CategoryController : Controller
+    public class CategoryController : SpenditControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<HomeController> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
 
         public CategoryController(ApplicationDbContext context, ILogger<HomeController> logger, UserManager<IdentityUser> userManager)
+            : base(userManager)
         {
             _context = context;
             _logger = logger;
-            _userManager = userManager;
         }
 
         // GET: Category
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.Where(t => t.UserId == _userManager.GetUserId(User)).ToListAsync());
+            return View(await _context.Categories.Where(t => t.UserId == CurrentUserId).ToListAsync());
         }
 
         // GET: Category/Details/5
@@ -41,7 +40,7 @@ namespace SpenditWeb.Controllers
             }
 
             var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id && m.UserId == _userManager.GetUserId(User));
+                .FirstOrDefaultAsync(m => m.CategoryId == id && m.UserId == CurrentUserId);
             if (category == null)
             {
                 return NotFound();
@@ -63,7 +62,7 @@ namespace SpenditWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CategoryId,Title,Icon,Type")] Category category)
         {
-            category.UserId = _userManager.GetUserId(User);
+            category.UserId = CurrentUserId;
             if (ModelState.IsValid)
             {
                 _context.Add(category);
@@ -97,7 +96,7 @@ namespace SpenditWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CategoryId,Title,Icon,Type")] Category category)
         {
-            category.UserId = _userManager.GetUserId(User);
+            category.UserId = CurrentUserId;
             if (id != category.CategoryId)
             {
                 return NotFound();
@@ -135,7 +134,7 @@ namespace SpenditWeb.Controllers
             }
 
             var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id && m.UserId == _userManager.GetUserId(User));
+                .FirstOrDefaultAsync(m => m.CategoryId == id && m.UserId == CurrentUserId);
             if (category == null)
             {
                 return NotFound();
@@ -150,7 +149,7 @@ namespace SpenditWeb.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id && m.UserId == _userManager.GetUserId(User));
+                .FirstOrDefaultAsync(m => m.CategoryId == id && m.UserId == CurrentUserId);
             if (category != null)
             {
                 _context.Categories.Remove(category);

@@ -37,14 +37,14 @@ namespace SpenditWeb.Controllers
 
             // Last 30 day income
             int TotalIncome = SelectedTransactions
-                .Where(i => i.Category.Type == "Income")
+                .Where(i => i.Category.Type == CategoryType.Income)
                 .Sum(j => j.Amount);
 
             ViewBag.TotalIncome = TotalIncome.ToString("c0");
 
             // Last 30 day expense
             int TotalExpense = SelectedTransactions
-                .Where(i => i.Category.Type == "Expense")
+                .Where(i => i.Category.Type == CategoryType.Expense)
                 .Sum(j => j.Amount);
 
             ViewBag.Expense = TotalExpense.ToString("c0");
@@ -60,7 +60,7 @@ namespace SpenditWeb.Controllers
 
             //Doughnut Chart - Income By Category
             ViewBag.DoughnutChartData1 = SelectedTransactions
-                .Where(i => i.Category.Type == "Income")
+                .Where(i => i.Category.Type == CategoryType.Income)
                 .GroupBy(j => j.Category.CategoryId)
                 .Select(k => new
                 {
@@ -73,7 +73,7 @@ namespace SpenditWeb.Controllers
 
             //Doughnut Chart - Expense By Category
             ViewBag.DoughnutChartData2 = SelectedTransactions
-                .Where(i => i.Category.Type == "Expense")
+                .Where(i => i.Category.Type == CategoryType.Expense)
                 .GroupBy(j => j.Category.CategoryId)
                 .Select(k => new
                 {
@@ -88,7 +88,7 @@ namespace SpenditWeb.Controllers
 
             //Income
             List<SplineChartData> IncomeSummary = SelectedTransactions
-                .Where(i => i.Category.Type == "Income")
+                .Where(i => i.Category.Type == CategoryType.Income)
                 .GroupBy(j => j.Date)
                 .Select(k => new SplineChartData()
                 {
@@ -99,7 +99,7 @@ namespace SpenditWeb.Controllers
 
             //Expense
             List<SplineChartData> ExpenseSummary = SelectedTransactions
-                .Where(i => i.Category.Type == "Expense")
+                .Where(i => i.Category.Type == CategoryType.Expense)
                 .GroupBy(j => j.Date)
                 .Select(k => new SplineChartData()
                 {

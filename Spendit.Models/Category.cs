@@ -24,7 +24,7 @@ namespace Spendit.Models
         public string Icon { get; set; } = "";
 
         [Column(TypeName = "nvarchar(15)")]
-        public string Type { get; set; } = "Expense";
+        public string Type { get; set; } = CategoryType.Expense;
 
         [NotMapped]
         public string? TitleWithIcon
