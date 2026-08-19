@@ -26,10 +26,49 @@ namespace SpenditWeb.Controllers
         }
 
         // GET: Transaction
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime? from, DateTime? to, int? categoryId, int page = 1)
         {
-            var applicationDbContext = _context.Transactions.Where(t => t.Category.UserId == CurrentUserId).Include(t => t.Category);
-            return View(await applicationDbContext.ToListAsync());
+            const int pageSize = 20;
+
+            var transactionsQuery = _context.Transactions
+                .Include(t => t.Category)
+                .Where(t => t.Category.UserId == CurrentUserId);
+
+            if (from.HasValue)
+            {
+                transactionsQuery = transactionsQuery.Where(t => t.Date >= from.Value.Date);
+            }
+
+            if (to.HasValue)
+            {
+                var endDate = to.Value.Date.AddDays(1);
+                transactionsQuery = transactionsQuery.Where(t => t.Date < endDate);
+            }
+
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                transactionsQuery = transactionsQuery.Where(t => t.CategoryId == categoryId.Value);
+            }
+
+            var totalCount = await transactionsQuery.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            page = Math.Clamp(page, 1, Math.Max(1, totalPages));
+
+            var transactions = await transactionsQuery
+                .OrderByDescending(t => t.Date)
+                .ThenByDescending(t => t.TransactionId)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            PopulateCategories();
+            ViewBag.From = from?.ToString("yyyy-MM-dd");
+            ViewBag.To = to?.ToString("yyyy-MM-dd");
+            ViewBag.CategoryId = categoryId;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
+            return View(transactions);
         }
 
         // GET: Transaction/Details/5
