@@ -51,23 +51,33 @@
     </div>
 </form>
 
-<div class="row">
-    <div class="col-md-12">
-        <ejs-grid id="transactions" dataSource="@Model" gridLines="None"
-                  allowSorting="true" toolbar="@(new List<string>() { "Search"})">
-            <e-grid-sortsettings columns="cols"></e-grid-sortsettings>
-            <e-grid-columns>
-                <e-grid-column headerText="Category" field="CategoryTitleWithIcon" textAlign="Justify" width="200px"></e-grid-column>
-                <e-grid-column headerText="Date" field="Date" type="date" format="MMM-dd-yy" textAlign="Center" width="100px"></e-grid-column>
-                <e-grid-column headerText="Amount" template="#amountColumnTemplate" textAlign="Center" width="100px"></e-grid-column>
-                <e-grid-column headerText="Actions" template="#actionColumnTemplate" textAlign="Center" width="100px"></e-grid-column>
-                @* for searching purpose *@
-                <e-grid-column field="Amount" visible=false></e-grid-column>
-                <e-grid-column field="Category.Type" visible=false></e-grid-column>
-            </e-grid-columns>
-        </ejs-grid>
+@if (Model.Any())
+{
+    <div class="row">
+        <div class="col-md-12">
+            <ejs-grid id="transactions" dataSource="@Model" gridLines="None"
+                      allowSorting="true" toolbar="@(new List<string>() { "Search"})">
+                <e-grid-sortsettings columns="cols"></e-grid-sortsettings>
+                <e-grid-columns>
+                    <e-grid-column headerText="Category" field="CategoryTitleWithIcon" textAlign="Justify" width="200px"></e-grid-column>
+                    <e-grid-column headerText="Type" template="#typeColumnTemplate" textAlign="Center" width="100px"></e-grid-column>
+                    <e-grid-column headerText="Date" field="Date" type="date" format="MMM-dd-yy" textAlign="Center" width="100px"></e-grid-column>
+                    <e-grid-column headerText="Amount" template="#amountColumnTemplate" textAlign="Center" width="100px"></e-grid-column>
+                    <e-grid-column headerText="Actions" template="#actionColumnTemplate" textAlign="Center" width="100px"></e-grid-column>
+                    @* for searching purpose *@
+                    <e-grid-column field="Amount" visible=false></e-grid-column>
+                    <e-grid-column field="Category.Type" visible=false></e-grid-column>
+                </e-grid-columns>
+            </ejs-grid>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="alert alert-info text-center" role="status">
+        No transactions found. Try adjusting your filters or add a new transaction.
+    </div>
+}
 
 @if (totalPages > 1)
 {
@@ -103,6 +113,14 @@
         <span class="badge bg-info">${FormattedAmount}</span>
     ${else}
         <span class="badge bg-danger">${FormattedAmount}</span>
+    ${/if}
+</script>
+
+<script id="typeColumnTemplate" type="text/x-template">
+    ${if(Category.Type=="@CategoryType.Income")}
+        <span class="badge bg-info">${Category.Type}</span>
+    ${else}
+        <span class="badge bg-danger">${Category.Type}</span>
     ${/if}
 </script>
 
